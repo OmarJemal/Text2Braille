@@ -21,8 +21,6 @@ class _SettingsPageState extends State<SettingsPage> {
   final ipController3 = TextEditingController();
   final ipController4 = TextEditingController();
 
-  
-
   @override
   void dispose() {
     portController.dispose();
@@ -98,6 +96,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                     maxLines: 1,
                                     controller: ipController1,
                                     decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.fromLTRB(
+                                            9.0, 9.0, 8.0, 3.0),
                                         border: InputBorder.none,
                                         hintText: "123"),
                                   ),
@@ -108,7 +108,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                     border: Border.all(color: Colors.black54),
                                   ),
                                 ),
-                                Text("."),
+                                Text(
+                                  ".",
+                                  style: TextStyle(fontSize: 30.0),
+                                ),
                                 Container(
                                   margin: EdgeInsets.symmetric(horizontal: 5.0),
                                   height: 40.0,
@@ -119,27 +122,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                     maxLines: 1,
                                     controller: ipController2,
                                     decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: "1,2,3"),
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(3.0),
-                                    ),
-                                    border: Border.all(color: Colors.black54),
-                                  ),
-                                ),
-                                Text("."),
-                                Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 5.0),
-                                  height: 40.0,
-                                  width: 50.0,
-                                  child: TextField(
-                                    keyboardType: TextInputType.number,
-                                    autofocus: false,
-                                    maxLines: 1,
-                                    controller: ipController3,
-                                    decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.fromLTRB(
+                                            9.0, 9.0, 8.0, 3.0),
                                         border: InputBorder.none,
                                         hintText: "123"),
                                   ),
@@ -150,7 +134,36 @@ class _SettingsPageState extends State<SettingsPage> {
                                     border: Border.all(color: Colors.black54),
                                   ),
                                 ),
-                                Text("."),
+                                Text(
+                                  ".",
+                                  style: TextStyle(fontSize: 30.0),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 5.0),
+                                  height: 40.0,
+                                  width: 50.0,
+                                  child: TextField(
+                                    keyboardType: TextInputType.number,
+                                    autofocus: false,
+                                    maxLines: 1,
+                                    controller: ipController3,
+                                    decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.fromLTRB(
+                                            9.0, 9.0, 8.0, 3.0),
+                                        border: InputBorder.none,
+                                        hintText: "123"),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(3.0),
+                                    ),
+                                    border: Border.all(color: Colors.black54),
+                                  ),
+                                ),
+                                Text(
+                                  ".",
+                                  style: TextStyle(fontSize: 30.0),
+                                ),
                                 Container(
                                   margin: EdgeInsets.symmetric(horizontal: 5.0),
                                   height: 40.0,
@@ -161,6 +174,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                     maxLines: 1,
                                     controller: ipController4,
                                     decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.fromLTRB(
+                                            9.0, 9.0, 8.0, 3.0),
                                         border: InputBorder.none,
                                         hintText: "123"),
                                   ),
@@ -283,44 +298,44 @@ class _SettingsPageState extends State<SettingsPage> {
                             ),
                             //TODO: Restrict users to only 3 digits per ip section
                             Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  margin:
-                                      EdgeInsets.symmetric(horizontal: 10.0),
-                                  height: 35.0,
-                                  width: 70.0,
-                                  child: TextField(
-                                    style: TextStyle(fontSize: 20.0),
-                                    keyboardType:
-                                        TextInputType.numberWithOptions(),
-                                    autofocus: false,
-                                    maxLines: 1,
-                                    controller: portController,
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.fromLTRB(11.0, 3.0, 8.0, 3.0),
-                                        border: InputBorder.none,
-                                        hintText: "8080"),
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(3.0),
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 10.0),
+                                    height: 35.0,
+                                    width: 70.0,
+                                    child: TextField(
+                                      style: TextStyle(fontSize: 20.0),
+                                      keyboardType:
+                                          TextInputType.numberWithOptions(),
+                                      autofocus: false,
+                                      maxLines: 1,
+                                      controller: portController,
+                                      decoration: InputDecoration(
+                                          contentPadding: EdgeInsets.fromLTRB(
+                                              11.0, 3.0, 8.0, 3.0),
+                                          border: InputBorder.none,
+                                          hintText: "8080"),
                                     ),
-                                    border: Border.all(color: Colors.black54),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(3.0),
+                                      ),
+                                      border: Border.all(color: Colors.black54),
+                                    ),
                                   ),
-                                ),
-                              ]
-                            ),
+                                ]),
                             SizedBox(
                               height: 40.0,
                             ),
                             RaisedButton(
                               onPressed: () {
                                 String portNumber = portController.text;
-                                    
-                                if (portNumber.contains(RegExp(
-                                    r'^(\d?\d?\d?\d?)$'))) {
+
+                                if (portNumber
+                                    .contains(RegExp(r'^(\d?\d?\d?\d?)$'))) {
                                   print("in here pt 3");
                                   preferences
                                       .setPortNumber(portNumber)
@@ -396,7 +411,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           Center(
             child: RaisedButton(
-              color: Colors.greenAccent,
+              color: Colors.green[300],
               onPressed: () {
                 setState(() {});
               },
