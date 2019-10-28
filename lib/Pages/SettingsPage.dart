@@ -21,6 +21,8 @@ class _SettingsPageState extends State<SettingsPage> {
   final ipController3 = TextEditingController();
   final ipController4 = TextEditingController();
 
+  
+
   @override
   void dispose() {
     portController.dispose();
@@ -188,13 +190,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     r'^(\d?\d?\d)\.(\d?\d?\d)\.(\d?\d?\d)\.(\d?\d?\d)$'))) {
                                   print("in here");
                                   preferences
-                                      .setIpAddress(ipController1.text +
-                                          "." +
-                                          ipController2.text +
-                                          "." +
-                                          ipController3.text +
-                                          "." +
-                                          ipController4.text)
+                                      .setIpAddress(ipAddress)
                                       .then((result) {
                                     if (result == "Changed ip Address") {
                                       Toast.show(
@@ -269,7 +265,104 @@ class _SettingsPageState extends State<SettingsPage> {
             width: MediaQuery.of(context).size.width,
             height: 60.0,
             child: FlatButton(
-              onPressed: () {},
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Card(
+                      margin: EdgeInsets.fromLTRB(40.0, 60.0, 40.0, 300),
+                      child: Container(
+                        child: Column(
+                          children: <Widget>[
+                            SizedBox(
+                              height: 30.0,
+                            ),
+                            Text("Set Port Number"),
+                            SizedBox(
+                              height: 30.0,
+                            ),
+                            //TODO: Restrict users to only 3 digits per ip section
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  margin:
+                                      EdgeInsets.symmetric(horizontal: 10.0),
+                                  height: 35.0,
+                                  width: 70.0,
+                                  child: TextField(
+                                    style: TextStyle(fontSize: 20.0),
+                                    keyboardType:
+                                        TextInputType.numberWithOptions(),
+                                    autofocus: false,
+                                    maxLines: 1,
+                                    controller: portController,
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.fromLTRB(11.0, 3.0, 8.0, 3.0),
+                                        border: InputBorder.none,
+                                        hintText: "8080"),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(3.0),
+                                    ),
+                                    border: Border.all(color: Colors.black54),
+                                  ),
+                                ),
+                              ]
+                            ),
+                            SizedBox(
+                              height: 40.0,
+                            ),
+                            RaisedButton(
+                              onPressed: () {
+                                String portNumber = portController.text;
+                                    
+                                if (portNumber.contains(RegExp(
+                                    r'^(\d?\d?\d?\d?)$'))) {
+                                  print("in here pt 3");
+                                  preferences
+                                      .setPortNumber(portNumber)
+                                      .then((result) {
+                                    if (result == "Changed port Number") {
+                                      Toast.show(
+                                        "Changed port Number",
+                                        context,
+                                        duration: Toast.LENGTH_SHORT,
+                                        gravity: Toast.BOTTOM,
+                                      );
+                                      Navigator.pop(context, null);
+                                    } else {
+                                      Toast.show(
+                                        "Something went wrong :(",
+                                        context,
+                                        duration: Toast.LENGTH_SHORT,
+                                        gravity: Toast.BOTTOM,
+                                      );
+                                    }
+                                  }).catchError((error) {
+                                    print("ERROR" + error + "\n");
+                                  });
+                                } else {
+                                  print('in here pt 4');
+                                  Toast.show(
+                                    "Something went wrong :(",
+                                    context,
+                                    duration: Toast.LENGTH_SHORT,
+                                    gravity: Toast.BOTTOM,
+                                  );
+                                }
+                              },
+                              child: Text("Set"),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: FutureBuilder(
