@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:real_braille/Networks/NetworkCalls.Dart';
+import 'package:real_braille/Network_Call_Methods/NetworkCalls.Dart';
+import 'package:real_braille/Util/PreferencesHandler.dart';
 
 class SubmitPage extends StatefulWidget {
   SubmitPage({Key key, this.title}) : super(key: key);
@@ -18,6 +19,8 @@ class _SubmitPageState extends State<SubmitPage> {
   final bodyController = TextEditingController();
   final titleController = TextEditingController();
   final ipController = TextEditingController();
+
+  final SharedPref preferences = SharedPref.instance;
 
   @override
   void initState() {
@@ -55,8 +58,7 @@ class _SubmitPageState extends State<SubmitPage> {
               TextField(
                 controller: ipController,
                 decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: "IP address of System"),
+                    border: InputBorder.none, hintText: "IP address of System"),
               ),
               SizedBox(
                 height: 70.0,
@@ -64,8 +66,7 @@ class _SubmitPageState extends State<SubmitPage> {
               TextField(
                 controller: titleController,
                 decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: "Title of Message"),
+                    border: InputBorder.none, hintText: "Title of Message"),
               ),
               SizedBox(
                 height: 70.0,
@@ -104,7 +105,9 @@ class _SubmitPageState extends State<SubmitPage> {
                           FocusScope.of(context).unfocus();
                           Scaffold.of(context).showSnackBar(snackBar);
                           */
-                          var x =createMessage(ipController.text, titleController.text, bodyController.text);
+
+                          int id = int.parse(bodyController.text);
+                          var x = deleteText(ipController.text, id);
                           x.then((i) {
                             print("NETWORK2 " + i.statusCode.toString());
                           });
