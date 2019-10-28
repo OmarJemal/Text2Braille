@@ -1,6 +1,7 @@
 //import 'package:cbco_prototype/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:real_braille/Pages/MessagesPage.dart';
+import 'package:real_braille/Pages/SettingsPage.dart';
 
 //import 'settings_page.dart';
 
@@ -32,7 +33,10 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: Icon(Icons.settings),
             onPressed: () {
-              
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsPage()),
+              );
             },
           )
         ],
