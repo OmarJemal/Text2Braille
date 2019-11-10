@@ -12,7 +12,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  final SharedPref preferences = SharedPref.instance;
+  SharedPref preferences;
 
   final portController = TextEditingController();
 
@@ -20,6 +20,32 @@ class _SettingsPageState extends State<SettingsPage> {
   final ipController2 = TextEditingController();
   final ipController3 = TextEditingController();
   final ipController4 = TextEditingController();
+
+  bool isCurrentlyTestmode = false;
+  bool shouldreload = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    SharedPref initializer = SharedPref();
+
+    initializer.init().then(
+      (val) {
+        preferences = val;
+
+        checkTestingMode().then(
+          (val) {
+            isCurrentlyTestmode = val;
+          },
+        );
+
+        setState(() {
+          print("IN SETSTATE");
+        });
+      },
+    );
+  }
 
   @override
   void dispose() {
@@ -51,7 +77,7 @@ class _SettingsPageState extends State<SettingsPage> {
         title: Text('Settings'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pop(context, shouldreload),
         ),
       ),
       body: Column(
@@ -80,7 +106,6 @@ class _SettingsPageState extends State<SettingsPage> {
                             SizedBox(
                               height: 30.0,
                             ),
-                            //TODO: Restrict users to only 3 digits per ip section
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: <Widget>[
@@ -212,7 +237,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         "Changed ip Address",
                                         context,
                                         duration: Toast.LENGTH_SHORT,
-                                        gravity: Toast.BOTTOM,
+                                        gravity: Toast.TOP,
                                       );
                                       Navigator.pop(context, null);
                                     } else {
@@ -235,6 +260,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                     gravity: Toast.BOTTOM,
                                   );
                                 }
+
+                                setState(() {});
                               },
                               child: Text("Set"),
                             )
@@ -248,7 +275,13 @@ class _SettingsPageState extends State<SettingsPage> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: FutureBuilder(
-                  future: preferences.getIpAddress(),
+                  future: preferences == null
+                      ? Future.delayed(Duration(milliseconds: 50), () {
+                          print("IN F BUILDER 1");
+
+                          return "123.123.123.456";
+                        })
+                      : preferences.getIpAddress(),
                   builder:
                       (BuildContext context, AsyncSnapshot<String> snapshot) {
                     if (snapshot.hasData) {
@@ -368,6 +401,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                     gravity: Toast.BOTTOM,
                                   );
                                 }
+
+                                setState(() {});
                               },
                               child: Text("Set"),
                             )
@@ -381,7 +416,12 @@ class _SettingsPageState extends State<SettingsPage> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: FutureBuilder(
-                  future: preferences.getPortNumber(),
+                  future: preferences == null
+                      ? Future.delayed(Duration(milliseconds: 50), () {
+                          print("IN F BUILDER 2");
+                          return "8080";
+                        })
+                      : preferences.getPortNumber(),
                   builder:
                       (BuildContext context, AsyncSnapshot<String> snapshot) {
                     if (snapshot.hasData) {
@@ -406,6 +446,57 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
           Divider(),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            margin: EdgeInsets.fromLTRB(15.0, 0.0, 0.0, 0.0),
+            height: 60.0,
+            child: FutureBuilder(
+              future: preferences == null
+                  ? Future.delayed(Duration(milliseconds: 50), () => false)
+                  : preferences.getIsTestingMode(),
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.hasData) {
+                  return Row(
+                    children: <Widget>[
+                      Text(
+                        "Testing Mode",
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      Switch(
+                        value: isCurrentlyTestmode,
+                        onChanged: (val) {
+                          preferences.setIsTestingMode(val);
+
+                          setState(() {
+                            isCurrentlyTestmode = val;
+                            shouldreload = true;
+                          });
+
+                          print("Here is the val1:" + val.toString());
+                        },
+                      ),
+                    ],
+                  );
+                  // return Text("Port Number: " + snapshot.data);
+
+                } else if (snapshot.hasError) {
+                  /*
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Card(
+                              child: Text(snapshot.error.toString()),
+                            );
+                          }); */
+                  print(snapshot.error.toString());
+                  return Text("error, please refresh");
+                } else {
+                  return CircularProgressIndicator();
+                }
+              },
+            ),
+          ),
+          Divider(),
           SizedBox(
             height: 50.0,
           ),
@@ -421,5 +512,10 @@ class _SettingsPageState extends State<SettingsPage> {
         ],
       ),
     );
+  }
+
+  Future<bool> checkTestingMode() async {
+    bool isTestingMode = await preferences.getIsTestingMode();
+    return isTestingMode;
   }
 }

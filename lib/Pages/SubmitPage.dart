@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+import 'package:toast/toast.dart';
 
 import 'package:real_braille/Network_Call_Methods/NetworkCalls.Dart';
 import 'package:real_braille/Util/PreferencesHandler.dart';
@@ -18,12 +21,17 @@ class SubmitPage extends StatefulWidget {
 class _SubmitPageState extends State<SubmitPage> {
   final bodyController = TextEditingController();
   final titleController = TextEditingController();
-  final ipController = TextEditingController();
 
-  final SharedPref preferences = SharedPref.instance;
+  SharedPref preferences;
 
   @override
   void initState() {
+    SharedPref initializer = SharedPref();
+
+    initializer.init().then((val) {
+      preferences = val;
+    });
+
     super.initState();
 
     //FocusNode myFocusNode = FocusNode();
@@ -38,7 +46,6 @@ class _SubmitPageState extends State<SubmitPage> {
     // TODO: implement dispose
     bodyController.dispose();
     titleController.dispose();
-    ipController.dispose();
 
     super.dispose();
   }
@@ -50,37 +57,22 @@ class _SubmitPageState extends State<SubmitPage> {
       child: Center(
         child: SingleChildScrollView(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               SizedBox(
-                height: 100.0,
+                height: 30.0,
               ),
-              Text("Text to be Translated"),
-              TextField(
-                controller: ipController,
-                decoration: InputDecoration(
-                    border: InputBorder.none, hintText: "IP address of System"),
-              ),
-              SizedBox(
-                height: 70.0,
-              ),
-              TextField(
-                controller: titleController,
-                decoration: InputDecoration(
-                    border: InputBorder.none, hintText: "Title of Message"),
-              ),
-              SizedBox(
-                height: 70.0,
-              ),
+              Text("Message Title"),
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 20.0),
-                height: 150.0,
+                height: 40.0,
+                width: 150.0,
                 child: TextField(
-                  autofocus: true,
-                  maxLines: 8,
-                  controller: bodyController,
+                  controller: titleController,
                   decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: "Message to be Translated"),
+                    border: InputBorder.none,
+                    hintText: "Title of Message",
+                  ),
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(
@@ -90,15 +82,35 @@ class _SubmitPageState extends State<SubmitPage> {
                 ),
               ),
               SizedBox(
-                height: 50.0,
+                height: 30.0,
+              ),
+              Text("Message Body"),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 20.0),
+                height: 200.0,
+                width: 300.0,
+                child: TextField(
+                  controller: bodyController,
+                  decoration: InputDecoration(
+                      border: InputBorder.none, hintText: "Message body"),
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10.0),
+                  ),
+                  border: Border.all(color: Colors.black54),
+                ),
+              ),
+              SizedBox(
+                height: 30.0,
               ),
               Builder(
-                  builder: (context) => RaisedButton(
-                        disabledColor: Colors.blueAccent,
-                        color: Colors.lightBlue,
-                        child: Text("Submit Text"),
-                        onPressed: () {
-                          /*
+                builder: (context) => RaisedButton(
+                  disabledColor: Colors.blueAccent,
+                  color: Colors.lightBlue,
+                  child: Text("Submit Text"),
+                  onPressed: () {
+                    /*
                           final snackBar = SnackBar(
                             content: Text("Submitted Text " + bodyController.text),
                           );
@@ -106,14 +118,34 @@ class _SubmitPageState extends State<SubmitPage> {
                           Scaffold.of(context).showSnackBar(snackBar);
                           */
 
-                          int id = int.parse(bodyController.text);
-                          var x = deleteText(ipController.text, id);
-                          x.then((i) {
-                            print("NETWORK2 " + i.statusCode.toString());
-                          });
-                          print("NETWORK CALL" + x.toString());
-                        },
-                      ))
+                    preferences.getAddress().then(
+                      (val) {
+                        print("in here pt 1");
+
+                        try{
+                          
+                        createText(
+                                val, titleController.text, bodyController.text)
+                            .then((val) {
+                          print("in here pt 1");
+
+                          Toast.show(
+                            val.body,
+                            context,
+                            duration: Toast.LENGTH_LONG,
+                            gravity: Toast.TOP,
+                          );
+                        }).catchError((err){
+                          print(err);
+                        });
+                        }catch(e){
+                         print(e);
+                        }
+                      },
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         ),
