@@ -183,7 +183,7 @@ Future<http.Response> getAllText(String ipAddress) async {
 }
 
 //network call method for getting the current selected Text
-Future<http.Response> getSelectedText(String ipAddress, int id) async {
+Future<http.Response> getSelectedText(String ipAddress) async {
   var url = 'http://' + ipAddress + "/selectText";
 
   var response = await http.get(
@@ -218,7 +218,7 @@ Future<http.Response> editCategory( String ipAddress,int id, String name, String
 }
 
 //network call method for adding Text with a specified id to a Category with a specified id
-Future<http.Response> addTextToCategory( String ipAddress,int catId,int textId, String name, String description) async {
+Future<http.Response> addTextToCategory( String ipAddress,int catId,int textId) async {
   
   var url = 'http://' + ipAddress + "/organization/category/" + catId.toString() + "/addText/"+ textId.toString();
 
