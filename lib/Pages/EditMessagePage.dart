@@ -1,22 +1,28 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:real_braille/models/FullModels/TextModel.dart';
+import 'package:real_braille/models/PreviewModels/TextPreviewModel.dart';
 import 'package:toast/toast.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:real_braille/Network_Call_Methods/NetworkCalls.Dart';
 import 'package:real_braille/Util/PreferencesHandler.dart';
 
-class SubmitPage extends StatefulWidget {
-  SubmitPage({Key key, this.title}) : super(key: key);
-
+class EditPage extends StatefulWidget {
   final String title;
+  final int textId;
+
+  EditPage({Key key, this.title, this.textId}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return _SubmitPageState();
+    return _EditPageState();
   }
 }
 
-class _SubmitPageState extends State<SubmitPage> {
+class _EditPageState extends State<EditPage> {
   final bodyController = TextEditingController();
   final titleController = TextEditingController();
 
@@ -25,6 +31,8 @@ class _SubmitPageState extends State<SubmitPage> {
   @override
   void initState() {
     SharedPref initializer = SharedPref();
+
+    titleController.text = widget.title;
 
     initializer.init().then((val) {
       preferences = val;
@@ -53,7 +61,11 @@ class _SubmitPageState extends State<SubmitPage> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Container(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("edit message"),
+      ),
+      body: Container(
       child: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -85,21 +97,46 @@ class _SubmitPageState extends State<SubmitPage> {
                 height: 30.0,
               ),
               Text("Message Body"),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 20.0),
-                height: 200.0,
-                width: 300.0,
-                child: TextField(
-                  controller: bodyController,
-                  decoration: InputDecoration(
-                      border: InputBorder.none, hintText: "Message body"),
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10.0),
-                  ),
-                  border: Border.all(color: Colors.black54),
-                ),
+              FutureBuilder(
+                future: getMessage(widget.textId),
+                builder: (BuildContext context,
+                    AsyncSnapshot<http.Response> snapshot) {
+                  if (snapshot.hasData) {
+                    var responseJson = jsonDecode(snapshot.data.body);
+                    // var responseJson = jsonDecode(val.body);
+
+                    TextModel currentText = TextModel.fromJson(responseJson);
+
+                    bodyController.text = currentText.text;
+
+                    return Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20.0),
+                      height: 200.0,
+                      width: 300.0,
+                      child: TextField(
+                        controller: bodyController,
+                        decoration: InputDecoration(
+                            border: InputBorder.none, hintText: "Message body"),
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10.0),
+                        ),
+                        border: Border.all(color: Colors.black54),
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    print("ERROR IN EDITMESSAGE FUTURE BUILDER:" +
+                        snapshot.error);
+                    return Center(
+                      child: Text("An error has occured"),
+                    );
+                  } else {
+                    return Center(
+                      child: LinearProgressIndicator(),
+                    );
+                  }
+                },
               ),
               SizedBox(
                 height: 30.0,
@@ -121,22 +158,26 @@ class _SubmitPageState extends State<SubmitPage> {
                       preferences.getAddress().then(
                         (val) {
                           print("in here pt 1");
-
                           try {
-                            createText(val, titleController.text,
+                            editText(val, widget.textId, titleController.text,
                                     bodyController.text)
-                                .then((val) {
-                              print("in here pt 2");
+                                .then(
+                              (val) {
+                                print("in here pt 2");
 
-                              Toast.show(
-                                val.body,
-                                context,
-                                duration: Toast.LENGTH_LONG,
-                                gravity: Toast.TOP,
-                              );
-                            }).catchError((err) {
-                              print(err);
-                            });
+                                Toast.show(
+                                  val.body,
+                                  context,
+                                  duration: Toast.LENGTH_LONG,
+                                  gravity: Toast.TOP,
+                                );
+                              },
+                            ).catchError(
+                              (err) {
+                                print(err);
+                              },
+                            );
+                            Navigator.pop(context);
                           } catch (e) {
                             print(e);
                           }
@@ -150,6 +191,17 @@ class _SubmitPageState extends State<SubmitPage> {
           ),
         ),
       ),
+    ),
     );
+   
+  }
+
+  Future<http.Response> getMessage(int messageId) async {
+    if (preferences != null) {
+      String address = await preferences.getAddress();
+      return await getText(address, messageId);
+    } else {
+      return null;
+    }
   }
 }
