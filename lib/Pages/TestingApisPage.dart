@@ -274,7 +274,7 @@ class _TestAPIPageState extends State<TestAPIPage> {
                     child: Text("get selected Text"),
                     onPressed: () {
                       getAddress().then((val) {
-                        getSelectedText(val, int.parse(textIdController.text))
+                        getSelectedText(val)
                             .then((val) {
                           test(val);
                         });
@@ -329,7 +329,7 @@ class _TestAPIPageState extends State<TestAPIPage> {
                     child: Text("add text to category"),
                     onPressed: () {
                       getAddress().then((val) {
-                        addTextToCategory(val, int.parse(categoryIdController.text),int.parse(textIdController.text), titleController.text, bodyController.text)
+                        addTextToCategory(val, int.parse(categoryIdController.text),int.parse(textIdController.text))
                             .then((val) {
                           test(val);
                         });
