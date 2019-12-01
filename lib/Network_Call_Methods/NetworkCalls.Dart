@@ -23,13 +23,16 @@ Future<http.Response> createText(
 }
 
 //network call method for creating a Category with a name and description
-Future<http.Response> createCategory( String ipAddress, String name, String description, {List<int> Texts}) async {
-  
+Future<http.Response> createCategory(
+  String ipAddress,
+  String name,
+  String description,
+) async {
   var url = 'http://' + ipAddress + "/organization/create/category";
 
   Map data = {
     'description': description,
-    'name':name,
+    'name': name,
     'texts': [],
   };
 
@@ -44,12 +47,10 @@ Future<http.Response> createCategory( String ipAddress, String name, String desc
   return response;
 }
 
-
 //DELETE METHODS
 
 //network call method for deleting a text specified by an id
 Future<http.Response> deleteText(String ipAddress, int id) async {
-  
   var url = 'http://' + ipAddress + "/deleteText/" + id.toString();
 
   var response = http.delete(
@@ -61,9 +62,14 @@ Future<http.Response> deleteText(String ipAddress, int id) async {
 }
 
 //network call method for deleting a category with an option of deleting the text with the category
-Future<http.Response> deleteCategory(String ipAddress, int id, bool deleteContents) async {
-  
-  var url = 'http://' + ipAddress + "/organization/category/" + id.toString() +" ?deleteContents=" + deleteContents.toString();
+Future<http.Response> deleteCategory(
+    String ipAddress, int id, bool deleteContents) async {
+  var url = 'http://' +
+      ipAddress +
+      "/organization/category/" +
+      id.toString() +
+      " ?deleteContents=" +
+      deleteContents.toString();
 
   var response = http.delete(
     url,
@@ -148,7 +154,7 @@ Future<http.Response> getText(String ipAddress, int id) async {
 
 // network call method for getting all categories
 Future<http.Response> getAllCategories(String ipAddress) async {
-  var url = 'http://' + ipAddress + "/organization/categories" ;
+  var url = 'http://' + ipAddress + "/organization/categories";
 
   var response = await http.get(
     url,
@@ -197,13 +203,13 @@ Future<http.Response> getSelectedText(String ipAddress) async {
 //PATCH METHODS
 
 //network call method for selecting Category with a specified id
-Future<http.Response> editCategory( String ipAddress,int id, String name, String description) async {
-  
-  var url = 'http://' + ipAddress + "/organization/category/"+ id.toString();
+Future<http.Response> editCategory(
+    String ipAddress, int id, String name, String description) async {
+  var url = 'http://' + ipAddress + "/organization/category/" + id.toString();
 
   Map data = {
     'description': description,
-    'name':name,
+    'name': name,
   };
 
   var body = json.encode(data);
@@ -218,9 +224,14 @@ Future<http.Response> editCategory( String ipAddress,int id, String name, String
 }
 
 //network call method for adding Text with a specified id to a Category with a specified id
-Future<http.Response> addTextToCategory( String ipAddress,int catId,int textId) async {
-  
-  var url = 'http://' + ipAddress + "/organization/category/" + catId.toString() + "/addText/"+ textId.toString();
+Future<http.Response> addTextToCategory(
+    String ipAddress, int catId, int textId) async {
+  var url = 'http://' +
+      ipAddress +
+      "/organization/category/" +
+      catId.toString() +
+      "/addText/" +
+      textId.toString();
 
   var response = await http.patch(
     url,
@@ -230,3 +241,20 @@ Future<http.Response> addTextToCategory( String ipAddress,int catId,int textId) 
   return response;
 }
 
+//network call method for adding Text with a specified id to a Category with a specified id
+Future<http.Response> removeTextFromCategory(
+    String ipAddress, int catId, int textId) async {
+  var url = 'http://' +
+      ipAddress +
+      "/organization/category/" +
+      catId.toString() +
+      "/removeText/" +
+      textId.toString();
+
+  var response = await http.patch(
+    url,
+    headers: {"Content-Type": "application/json"},
+  );
+
+  return response;
+}
