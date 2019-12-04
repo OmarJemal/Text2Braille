@@ -1,5 +1,6 @@
 //import 'package:cbco_prototype/settings_page.dart';
 import 'package:flutter/material.dart';
+import 'package:real_braille/Pages/AppHomeScreen.dart';
 
 import 'package:real_braille/Pages/MessagesPage.dart';
 import 'package:real_braille/Pages/SettingsPage.dart';
@@ -21,44 +22,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _currentIndex = 0;
+  /* int _currentIndex = 0;
 
   SharedPref preferences;
 
-  /*List<Widget> _children = [
-    SubmitPage(title: "Text to Braille"),
-    MessagesPage(),
-  ];
-
-  List<BottomNavigationBarItem> _navItems = [
-    BottomNavigationBarItem(
-      title: Text("Create new Message"),
-      icon: Icon(Icons.save),
-    ),
-    BottomNavigationBarItem(
-      title: Text("View Messages"),
-      icon: Icon(
-        Icons.subject,
-      ),
-    ),
-    BottomNavigationBarItem(
-      title: Text("Test Page"),
-      icon: Icon(
-        Icons.developer_mode,
-      ),
-    ),
-  ];
-
-*/
-
   List<Widget> _children;
-  List<BottomNavigationBarItem> _navItems = [];
+  List<BottomNavigationBarItem> _navItems = []; */
 
   @override
   void initState() {
     super.initState();
 
-    print("INIT START");
+    /*  print("INIT START");
     SharedPref initializer = SharedPref();
 
     initializer.init().then((val) {
@@ -77,13 +52,74 @@ class _HomePageState extends State<HomePage> {
       print("INIT START3");
     });
 
-    setState(() {});
+    setState(() {}); */
   }
 
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    var data = "View Messages";
+    return Scaffold(
+      body: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 200,
+          ),
+          Container(
+            margin: EdgeInsets.all(30),
+             height: 75.0,
+            width: 350.0,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(
+                Radius.circular(10.0),
+              ),
+              border: Border.all(color: Colors.black54),
+            ),
+            child: InkResponse(
+              onTap: () => goToTextsPage(1),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Center(
+                  child: Row(
+                    children: <Widget>[
+                      Text("Submit Texts"),
+                      Icon(Icons.remove_red_eye)
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.all(30),
+            height: 75.0,
+            width: 350.0,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(
+                Radius.circular(10.0),
+              ),
+              border: Border.all(color: Colors.black54),
+            ),
+            child: InkResponse(
+              onTap: () => goToTextsPage(0),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Center(
+                  child: Row(
+                    children: <Widget>[
+                      Text("View Texts"),
+                      Icon(Icons.view_list)
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    /* return FutureBuilder(
       future: preferences == null
-          ? Future.delayed(Duration(milliseconds: 100), () => false)
+          ? Future.delayed(Duration(milliseconds:1000), () => false)
           : preferences.getIsTestingMode(),
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
         if (snapshot.hasData) {
@@ -139,15 +175,17 @@ class _HomePageState extends State<HomePage> {
           return Center(child: CircularProgressIndicator());
         }
       },
-    );
+    ); */
   }
 
-  void onTabTapped(int index) {
+  /* void onTabTapped(int index) {
     setState(() {
       _currentIndex = index;
     });
   }
+ */
 
+/* 
   Future<List<Widget>> getTabs() async {
     bool isTestingMode = await preferences.getIsTestingMode();
 
@@ -164,7 +202,9 @@ class _HomePageState extends State<HomePage> {
       ];
     }
   }
+ */
 
+/* 
   Future<List<BottomNavigationBarItem>> getNavItems() async {
     bool isTestingMode = await preferences.getIsTestingMode();
 
@@ -202,7 +242,9 @@ class _HomePageState extends State<HomePage> {
       ];
     }
   }
+ */
 
+/* 
   Future<bool> settings() async {
     bool shouldReload = await Navigator.push(
       context,
@@ -217,7 +259,7 @@ class _HomePageState extends State<HomePage> {
     print("-----------");
     return shouldReload;
   }
-
+ */
   /*
   Future<bool> defaultFuture() async {
     bool shouldReload = await Navigator.push(
@@ -230,4 +272,15 @@ class _HomePageState extends State<HomePage> {
     return shouldReload;
   }
   */
+
+  void goToTextsPage(int firstPage) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AppHomePage(
+          initialPage: firstPage,
+        ),
+      ),
+    );
+  }
 }

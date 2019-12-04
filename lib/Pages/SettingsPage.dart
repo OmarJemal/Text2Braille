@@ -21,6 +21,10 @@ class _SettingsPageState extends State<SettingsPage> {
   final ipController3 = TextEditingController();
   final ipController4 = TextEditingController();
 
+  final focusNode1 = FocusNode();
+  final focusNode2 = FocusNode();
+  final focusNode3 = FocusNode();
+
   bool isCurrentlyTestmode = false;
   bool shouldreload = false;
 
@@ -55,6 +59,10 @@ class _SettingsPageState extends State<SettingsPage> {
     ipController2.dispose();
     ipController3.dispose();
     ipController4.dispose();
+
+    focusNode1.dispose();
+    focusNode2.dispose();
+    focusNode3.dispose();
 
     super.dispose();
   }
@@ -117,7 +125,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   child: TextField(
                                     keyboardType:
                                         TextInputType.numberWithOptions(),
-                                    autofocus: false,
+                                    autofocus: true,
                                     maxLines: 1,
                                     controller: ipController1,
                                     decoration: InputDecoration(
@@ -125,6 +133,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                             9.0, 9.0, 8.0, 3.0),
                                         border: InputBorder.none,
                                         hintText: "123"),
+                                    onSubmitted: (val) {
+                                      FocusScope.of(context)
+                                          .requestFocus(focusNode1);
+                                    },
                                   ),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.all(
@@ -143,7 +155,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   width: 50.0,
                                   child: TextField(
                                     keyboardType: TextInputType.number,
-                                    autofocus: false,
+                                    focusNode: focusNode1,
                                     maxLines: 1,
                                     controller: ipController2,
                                     decoration: InputDecoration(
@@ -151,6 +163,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                             9.0, 9.0, 8.0, 3.0),
                                         border: InputBorder.none,
                                         hintText: "123"),
+                                    onSubmitted: (val) {
+                                      FocusScope.of(context)
+                                          .requestFocus(focusNode2);
+                                    },
                                   ),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.all(
@@ -169,7 +185,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   width: 50.0,
                                   child: TextField(
                                     keyboardType: TextInputType.number,
-                                    autofocus: false,
+                                    focusNode: focusNode2,
                                     maxLines: 1,
                                     controller: ipController3,
                                     decoration: InputDecoration(
@@ -177,6 +193,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                             9.0, 9.0, 8.0, 3.0),
                                         border: InputBorder.none,
                                         hintText: "123"),
+                                    onSubmitted: (val) {
+                                      FocusScope.of(context)
+                                          .requestFocus(focusNode3);
+                                    },
                                   ),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.all(
@@ -195,7 +215,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   width: 50.0,
                                   child: TextField(
                                     keyboardType: TextInputType.number,
-                                    autofocus: false,
+                                    focusNode: focusNode3,
                                     maxLines: 1,
                                     controller: ipController4,
                                     decoration: InputDecoration(
@@ -203,6 +223,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                             9.0, 9.0, 8.0, 3.0),
                                         border: InputBorder.none,
                                         hintText: "123"),
+                                        onSubmitted: (val){
+                                          Navigator.pop(context);
+                                        },
                                   ),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.all(
@@ -497,18 +520,6 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
           Divider(),
-          SizedBox(
-            height: 50.0,
-          ),
-          Center(
-            child: RaisedButton(
-              color: Colors.green[300],
-              onPressed: () {
-                setState(() {});
-              },
-              child: Text("Refresh"),
-            ),
-          )
         ],
       ),
     );
