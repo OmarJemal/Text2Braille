@@ -1,5 +1,4 @@
 
-import 'dart:convert';
 
 import 'package:real_braille/models/PreviewModels/TextPreviewModel.dart';
 class CategoryPreviewModel {
