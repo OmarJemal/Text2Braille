@@ -1,31 +1,33 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:real_braille/models/FullModels/TextModel.dart';
-import 'package:real_braille/models/PreviewModels/TextPreviewModel.dart';
+import 'package:real_braille/models/FullModels/CategoryModel.dart';
 import 'package:toast/toast.dart';
-import 'package:http/http.dart' as http;
 
 import 'package:real_braille/Network_Call_Methods/NetworkCalls.Dart';
 import 'package:real_braille/Util/PreferencesHandler.dart';
 
-class EditPage extends StatefulWidget {
-  final String title;
-  final int textId;
+import 'package:http/http.dart' as http;
 
-  EditPage({Key key, this.title, this.textId}) : super(key: key);
+class EditCategoryPage extends StatefulWidget {
+  EditCategoryPage({Key key, this.name, this.catId}) : super(key: key);
+
+  final String name;
+  final int catId;
+
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return _EditPageState();
+    return _EditCategoryPageState();
   }
 }
 
-class _EditPageState extends State<EditPage> {
-  var bodyController;
-  var titleController;
+class _EditCategoryPageState extends State<EditCategoryPage> {
+  var nameController ;
+  var descriptionController ;
 
+  
   bool bodyLoaded = false;
 
   SharedPref preferences;
@@ -34,7 +36,7 @@ class _EditPageState extends State<EditPage> {
   void initState() {
     SharedPref initializer = SharedPref();
 
-    titleController = TextEditingController(text: widget.title);
+    nameController= TextEditingController(text: widget.name) ;
 
     initializer.init().then((val) {
       preferences = val;
@@ -54,8 +56,8 @@ class _EditPageState extends State<EditPage> {
   @override
   void dispose() {
     // TODO: implement dispose
-    bodyController.dispose();
-    titleController.dispose();
+    nameController.dispose();
+    descriptionController.dispose();
 
     super.dispose();
   }
@@ -64,9 +66,6 @@ class _EditPageState extends State<EditPage> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      appBar: AppBar(
-        title: Text("edit message"),
-      ),
       body: Container(
         child: Center(
           child: SingleChildScrollView(
@@ -76,16 +75,16 @@ class _EditPageState extends State<EditPage> {
                 SizedBox(
                   height: 30.0,
                 ),
-                Text("Message Title"),
+                Text("Category Name"),
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 20.0),
                   height: 40.0,
                   width: 150.0,
-                  child: TextFormField(
-                    controller: titleController,
+                  child: TextField(
+                    controller: nameController,
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: "Title of Message",
+                      hintText: "Name of Category",
                     ),
                   ),
                   decoration: BoxDecoration(
@@ -98,32 +97,36 @@ class _EditPageState extends State<EditPage> {
                 SizedBox(
                   height: 30.0,
                 ),
-                Text("Message Body"),
+                Text("Category Description"),
                 FutureBuilder(
-                  future: getMessage(widget.textId),
+                  future: getMessage(widget.catId),
                   builder: (BuildContext context,
                       AsyncSnapshot<http.Response> snapshot) {
                     if (snapshot.hasData) {
                       var responseJson = jsonDecode(snapshot.data.body);
                       // var responseJson = jsonDecode(val.body);
 
-                      TextModel currentText = TextModel.fromJson(responseJson);
+                      CategoryModel currentText =
+                          CategoryModel.fromJson(responseJson);
+
+                      descriptionController.text = currentText.description;
 
                       if (!bodyLoaded) {
-                        bodyController =
-                            TextEditingController(text: currentText.text);
+                        descriptionController =
+                            TextEditingController(text: currentText.description);
                             bodyLoaded = true;
                       }
+
 
                       return Container(
                         margin: EdgeInsets.symmetric(horizontal: 20.0),
                         height: 200.0,
                         width: 300.0,
-                        child: TextFormField(
-                          controller: bodyController,
+                        child: TextField(
+                          controller: descriptionController,
                           decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Message body"),
+                              hintText: "Category Description"),
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(
@@ -133,7 +136,7 @@ class _EditPageState extends State<EditPage> {
                         ),
                       );
                     } else if (snapshot.hasError) {
-                      print("ERROR IN EDITMESSAGE FUTURE BUILDER:" +
+                      print("ERROR IN EDITCATEGORY FUTURE BUILDER:" +
                           snapshot.error);
                       return Center(
                         child: Text("An error has occured"),
@@ -152,11 +155,11 @@ class _EditPageState extends State<EditPage> {
                   builder: (context) => RaisedButton(
                     disabledColor: Colors.blueAccent,
                     color: Colors.lightBlue,
-                    child: Text("Submit Text"),
+                    child: Text("Create Category"),
                     onPressed: () {
                       /*
                           final snackBar = SnackBar(
-                            content: Text("Submitted Text " + bodyController.text),
+                            content: Text("Submitted Text " + nameController.text),
                           );
                           FocusScope.of(context).unfocus();
                           Scaffold.of(context).showSnackBar(snackBar);
@@ -165,25 +168,22 @@ class _EditPageState extends State<EditPage> {
                         preferences.getAddress().then(
                           (val) {
                             print("in here pt 1");
-                            try {
-                              editText(val, widget.textId, titleController.text,
-                                      bodyController.text)
-                                  .then(
-                                (val) {
-                                  print("in here pt 2");
 
-                                  Toast.show(
-                                    val.body,
-                                    context,
-                                    duration: Toast.LENGTH_LONG,
-                                    gravity: Toast.TOP,
-                                  );
-                                },
-                              ).catchError(
-                                (err) {
-                                  print(err);
-                                },
-                              );
+                            try {
+                              createCategory(val, nameController.text,
+                                      descriptionController.text)
+                                  .then((val) {
+                                print("in here pt 2");
+
+                                Toast.show(
+                                  val.body,
+                                  context,
+                                  duration: Toast.LENGTH_LONG,
+                                  gravity: Toast.TOP,
+                                );
+                              }).catchError((err) {
+                                print(err);
+                              });
                               Navigator.pop(context);
                             } catch (e) {
                               print(e);
@@ -202,10 +202,10 @@ class _EditPageState extends State<EditPage> {
     );
   }
 
-  Future<http.Response> getMessage(int messageId) async {
+  Future<http.Response> getMessage(int catId) async {
     if (preferences != null) {
       String address = await preferences.getAddress();
-      return await getText(address, messageId);
+      return await getCategory(address, catId);
     } else {
       return null;
     }
