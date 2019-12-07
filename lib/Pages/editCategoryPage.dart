@@ -66,6 +66,9 @@ class _EditCategoryPageState extends State<EditCategoryPage> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
+       appBar: AppBar(
+        title: Text("Edit Category!"),
+      ),
       body: Container(
         child: Center(
           child: SingleChildScrollView(
@@ -109,7 +112,7 @@ class _EditCategoryPageState extends State<EditCategoryPage> {
                       CategoryModel currentText =
                           CategoryModel.fromJson(responseJson);
 
-                      descriptionController.text = currentText.description;
+                     // descriptionController.text = currentText.description;
 
                       if (!bodyLoaded) {
                         descriptionController =
@@ -155,7 +158,7 @@ class _EditCategoryPageState extends State<EditCategoryPage> {
                   builder: (context) => RaisedButton(
                     disabledColor: Colors.blueAccent,
                     color: Colors.lightBlue,
-                    child: Text("Create Category"),
+                    child: Text("Update Category"),
                     onPressed: () {
                       /*
                           final snackBar = SnackBar(

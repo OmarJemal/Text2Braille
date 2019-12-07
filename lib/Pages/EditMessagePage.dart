@@ -65,7 +65,7 @@ class _EditPageState extends State<EditPage> {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        title: Text("edit message"),
+        title: Text("Edit Message!"),
       ),
       body: Container(
         child: Center(
@@ -152,7 +152,7 @@ class _EditPageState extends State<EditPage> {
                   builder: (context) => RaisedButton(
                     disabledColor: Colors.blueAccent,
                     color: Colors.lightBlue,
-                    child: Text("Submit Text"),
+                    child: Text("Update Text"),
                     onPressed: () {
                       /*
                           final snackBar = SnackBar(

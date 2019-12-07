@@ -48,51 +48,67 @@ class _MessagesPageState extends State<MessagesPage> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {
-            widget.pageController.animateToPage(1,
-                duration: Duration(milliseconds: 350), curve: Curves.easeInOut);
-          },
-        ),
-        body: FutureBuilder(
-          future: getAllMessagesAndCategory(),
-          builder:
-              (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
-            if (snapshot.hasData) {
-              print("IN FUTUREBUILDER MESSAGE LISTER");
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          widget.pageController.animateToPage(1,
+              duration: Duration(milliseconds: 350), curve: Curves.easeInOut);
+        },
+      ),
+      body: FutureBuilder(
+        future: getAllMessagesAndCategory(),
+        builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+          if (snapshot.hasData) {
+            print("IN FUTUREBUILDER MESSAGE LISTER");
 
-              List<TextPreviewModel> texts = snapshot.data[0];
-              List<CategoryPreviewModel> categories = snapshot.data[1];
-              int selectedTextId = snapshot.data[2];
-              /*
+            List<TextPreviewModel> texts = snapshot.data[0];
+            List<CategoryPreviewModel> categories = snapshot.data[1];
+            int selectedTextId = snapshot.data[2];
 
-          Dropdown menu for filter selections
+            //Dropdown menu for filter selections
+            List<String> categoryFilters = ["All", "None"];
 
-          DropdownButton(
-              hint: Text(
-                  'Please choose a location'), // Not necessary for Option 1
-              value: _selectedFilter,
-              onChanged: (newValue) {
-                setState(() {
-                  _selectedFilter = newValue;
-                });
+            categories.forEach(
+              (category) {
+                categoryFilters.add(category.name);
               },
-              items: categories.map((category) {
-                return DropdownMenuItem(
-                  child: new Text(category.name),
-                  value: category.name,
-                );
-              }).toList());
+            );
 
-List<TextPreviewModel> filteredTexts = texts.where((val){
-               val.
-             }).toList()
+            categories.map(
+              (val) {
+                print("sysc3600");
+              },
+            );
 
+            Widget dropDownButton = DropdownButton(
+                hint: Text(
+                    'Please choose a filter'), // Not necessary for Option 1
+                value: _selectedFilter,
+                onChanged: (newValue) {
+                  setState(
+                    () {
+                      _selectedFilter = newValue;
+                    },
+                  );
+                },
+                items: categoryFilters.map(
+                  (category) {
+                    return DropdownMenuItem<String>(
+                      child: new Text(category),
+                      value: category,
+                    );
+                  },
+                ).toList());
 
-          */
+            List<TextPreviewModel> filteredTexts = texts.where((val) {
+              if (_selectedFilter == "All") {
+                return true;
+              } else {
+                return _selectedFilter == val.categoryName;
+              }
+            }).toList();
 
-              /* 
+            /* 
           Widget messageList = ListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: texts.length,
@@ -114,7 +130,7 @@ List<TextPreviewModel> filteredTexts = texts.where((val){
           );
         */
 
-              Widget messageList = ListView.builder(
+            /*  Widget messageList = ListView.builder(
                 padding: const EdgeInsets.all(16),
                 itemCount: texts.length,
                 itemBuilder: (context, int index) {
@@ -179,36 +195,99 @@ List<TextPreviewModel> filteredTexts = texts.where((val){
                     ],
                   );
                 },
-              );
-              print("This is categories $categories");
+              ); */
 
-              return Column(
-                children: <Widget>[
-                  //TODO: there will be a filter bu
-                  Row(
-                    children: <Widget>[
-                      Container(
-                        child: IconButton(
-                          icon: Icon(Icons.folder),
-                          onPressed: () {},
-                        ),
+            Widget filteredMessageList = ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: filteredTexts.length,
+              itemBuilder: (context, int index) {
+                return Column(
+                  children: [
+                    ExpansionTile(
+                      leading: Icon(Icons.description),
+                      title: Text(
+                        texts[index].title,
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: filteredTexts[index].id == selectedTextId
+                                ? Colors.redAccent
+                                : Colors.black),
                       ),
-                      Container(
-                        child: IconButton(
-                          icon: Icon(Icons.folder),
-                          onPressed: () => goToCategoryHomePage(),
-                        ),
-                      )
-                    ],
-                    mainAxisAlignment: MainAxisAlignment.end,
-                  ),
-                  Flexible(child: messageList),
-                ],
-              );
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            IconButton(
+                              color: Colors.green,
+                              icon: Icon(Icons.send),
+                              tooltip: "Select",
+                              onPressed: () {
+                                sendSelectRequest(filteredTexts[index].id);
+                                setState(() {});
+                              },
+                            ),
+                            IconButton(
+                              color: Colors.redAccent,
+                              icon: Icon(Icons.delete),
+                              tooltip: "Delete",
+                              onPressed: () =>
+                                  sendDeleteRequest(filteredTexts[index].id),
+                            ),
+                            IconButton(
+                              color: Colors.orange,
+                              icon: Icon(Icons.edit),
+                              tooltip: "Edit",
+                              onPressed: () => goToEditPage(
+                                  texts[index].title, filteredTexts[index].id),
+                            ),
+                            IconButton(
+                              color: Colors.blueAccent,
+                              icon: Icon(Icons.add),
+                              tooltip: "Add to a Category",
+                              onPressed: () => displayCategoryMenu(
+                                  categories, filteredTexts[index].id),
+                            ),
+                            IconButton(
+                              color: Colors.deepPurpleAccent,
+                              icon: Icon(Icons.remove_red_eye),
+                              tooltip: "View",
+                              onPressed: () =>
+                                  displayMessage(filteredTexts[index].id),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                    Divider(),
+                  ],
+                );
+              },
+            );
+            print("This is categories $categories");
 
-              /* return messageList; */
+            return Column(
+              children: <Widget>[
+                //TODO: there will be a filter button
+                Row(
+                  children: <Widget>[
+                    Container(child: dropDownButton),
+                    Container(
+                      child: IconButton(
+                        icon: Icon(Icons.folder),
+                        tooltip: "Manage Categories",
+                        onPressed: () => goToCategoryHomePage(),
+                      ),
+                    )
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.end,
+                ),
+                Flexible(child: filteredMessageList),
+              ],
+            );
 
-              /*
+            /* return messageList; */
+
+            /*
           print(y[0]);
           print(y[0]['timeStamp']);
           print(y[0]['timeStamp'].runtimeType);
@@ -226,18 +305,20 @@ List<TextPreviewModel> filteredTexts = texts.where((val){
 
           */
 
-              //return Center(child: Text("Testing"));
+            //return Center(child: Text("Testing"));
 
-            } else if (snapshot.hasError) {
-              print(snapshot.error.toString());
-              return Center(
-                child: Text("error, please refresh"),
-              );
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          },
-        ));
+          } else if (snapshot.hasError) {
+            print("ERROR BUILDING MESSAGE FUTURE");
+            print(snapshot.error.toString());
+            return Center(
+              child: Text("error, please refresh"),
+            );
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+    );
   }
 
   Future<http.Response> getMessages() async {
@@ -245,7 +326,10 @@ List<TextPreviewModel> filteredTexts = texts.where((val){
       String address = await preferences.getAddress();
       return await getAllText(address);
     } else {
-      return null;
+      SharedPref initializer = SharedPref();
+      await initializer.init();
+      String address = await initializer.getAddress();
+      return await getAllText(address);
     }
   }
 
@@ -254,7 +338,10 @@ List<TextPreviewModel> filteredTexts = texts.where((val){
       String address = await preferences.getAddress();
       return await getAllCategories(address);
     } else {
-      return null;
+      SharedPref initializer = SharedPref();
+      await initializer.init();
+      String address = await initializer.getAddress();
+      return await getAllCategories(address);
     }
   }
 
@@ -263,7 +350,10 @@ List<TextPreviewModel> filteredTexts = texts.where((val){
       String address = await preferences.getAddress();
       return await getSelectedText(address);
     } else {
-      return null;
+      SharedPref initializer = SharedPref();
+      await initializer.init();
+      String address = await initializer.getAddress();
+      return await getSelectedText(address);
     }
   }
 
@@ -477,7 +567,8 @@ List<TextPreviewModel> filteredTexts = texts.where((val){
                 );
               }
             } else if (snapshot.hasError) {
-              print("error: " + snapshot.error);
+              print("ERROR GETTING MESSAGES/CATEGORIES: " + snapshot.error);
+
               return Center(
                 child: Text("Error message failed to load"),
               );
@@ -595,6 +686,8 @@ List<TextPreviewModel> filteredTexts = texts.where((val){
     preferences.getAddress().then((val) {
       deleteText(val, i);
     });
+
+    setState(() {});
   }
 
   void goToEditPage(String title, int i) {

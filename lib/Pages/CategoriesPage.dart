@@ -127,7 +127,7 @@ List<TextPreviewModel> filteredTexts = texts.where((val){
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
                             IconButton(
-                              color: Colors.greenAccent,
+                              color: Colors.orangeAccent,
                               icon: Icon(Icons.edit),
                               tooltip: "Edit Category",
                               onPressed: () {
@@ -196,7 +196,7 @@ List<TextPreviewModel> filteredTexts = texts.where((val){
             //return Center(child: Text("Testing"));
 
           } else if (snapshot.hasError) {
-            print(snapshot.error.toString());
+            print("ERROR HERE" + snapshot.error.toString());
             return Center(
               child: Text("error, please refresh"),
             );
@@ -213,7 +213,10 @@ List<TextPreviewModel> filteredTexts = texts.where((val){
       String address = await preferences.getAddress();
       return await getAllCategories(address);
     } else {
-      return null;
+      SharedPref initializer = SharedPref();
+      await initializer.init();
+      String address = await initializer.getAddress();
+      return await getAllCategories(address);
     }
   }
 
@@ -425,7 +428,16 @@ List<TextPreviewModel> filteredTexts = texts.where((val){
 
       return fullText;
     } else {
-      return null;
+      SharedPref initializer = SharedPref();
+      await initializer.init();
+      String address = await initializer.getAddress();
+      var response = await getText(address, messageId);
+
+      var responseJson = jsonDecode(response.body);
+
+      TextModel fullText = TextModel.fromJson(responseJson);
+
+      return fullText;
     }
   }
 
@@ -441,7 +453,17 @@ List<TextPreviewModel> filteredTexts = texts.where((val){
       print("fullCategory:" + fullCategory.toString());
       return fullCategory;
     } else {
-      return null;
+      SharedPref initializer = SharedPref();
+      await initializer.init();
+      String address = await initializer.getAddress();
+      var response = await getCategory(address, catId);
+
+      var responseJson = jsonDecode(response.body);
+      print("fullCategory2:" + responseJson.toString());
+
+      CategoryModel fullCategory = CategoryModel.fromJson(responseJson);
+      print("fullCategory:" + fullCategory.toString());
+      return fullCategory;
     }
   }
 
@@ -526,6 +548,7 @@ List<TextPreviewModel> filteredTexts = texts.where((val){
         );
       },
     );
+    setState(() {});
   }
 
   void goToEditCategoryPage(String name, int catId) {

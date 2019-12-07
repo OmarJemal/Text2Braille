@@ -58,6 +58,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     var data = "View Messages";
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Text to Braille"),
+      ),
       body: Column(
         children: <Widget>[
           SizedBox(
@@ -65,7 +68,7 @@ class _HomePageState extends State<HomePage> {
           ),
           Container(
             margin: EdgeInsets.all(30),
-             height: 75.0,
+            height: 75.0,
             width: 350.0,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(

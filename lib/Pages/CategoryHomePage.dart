@@ -33,7 +33,7 @@ class _CategoryHomePageState extends State<CategoryHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: Text("Categorys!"),
+        title: Text("Categories!"),
       ),
       body: PageView(
         controller: pageController,
